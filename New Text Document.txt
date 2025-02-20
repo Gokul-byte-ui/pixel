@@ -1,0 +1,200 @@
+import React, { useState } from 'react';
+import { ChevronRight, MinusCircle, PlusCircle, ShoppingCart, ArrowLeft } from 'lucide-react';
+
+const PixelStore = () => {
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [cart, setCart] = useState([]);
+  const [page, setPage] = useState(0);
+
+  const categories = [
+    { id: 'burgers', name: 'Burgers', image: '/api/placeholder/150/100' },
+    { id: 'chicken', name: 'Chicken & Sandwiches', image: '/api/placeholder/150/100' },
+    { id: 'breakfast', name: 'Breakfast', image: '/api/placeholder/150/100' },
+    { id: 'beverages', name: 'Beverages', image: '/api/placeholder/150/100' },
+    { id: 'desserts', name: 'Desserts & Shakes', image: '/api/placeholder/150/100' },
+    { id: 'sides', name: 'Fries & Sides', image: '/api/placeholder/150/100' },
+    { id: 'happy_meals', name: 'Happy Meals', image: '/api/placeholder/150/100' },
+    { id: 'mccafe', name: 'McCafé', image: '/api/placeholder/150/100' },
+    { id: 'salads', name: 'Salads', image: '/api/placeholder/150/100' },
+    { id: 'wraps', name: 'Wraps', image: '/api/placeholder/150/100' },
+    { id: 'pastries', name: 'Pastries', image: '/api/placeholder/150/100' },
+    { id: 'smoothies', name: 'Smoothies', image: '/api/placeholder/150/100' },
+  ];
+
+  const menuItems = {
+    burgers: [
+      { id: 'big_mac', name: 'Big Mac', price: 5.99, description: 'Iconic layers with special sauce', image: '/api/placeholder/200/150' },
+      { id: 'quarter_pounder', name: 'Quarter Pounder', price: 6.29, description: 'Fresh beef with cheese', image: '/api/placeholder/200/150' },
+      { id: 'double_cheese', name: 'Double Cheeseburger', price: 3.99, description: 'Double the cheese, double the flavor', image: '/api/placeholder/200/150' },
+      { id: 'bacon_cheese', name: 'Bacon Cheeseburger', price: 4.59, description: 'Crispy bacon and melted cheese.', image: '/api/placeholder/200/150' },
+      { id: 'mushroom_swiss', name: 'Mushroom Swiss Burger', price: 6.79, description: 'Sautéed mushrooms and Swiss cheese.', image: '/api/placeholder/200/150' },
+    ],
+    chicken: [
+      { id: 'mcchicken', name: 'McChicken', price: 4.29, description: 'Classic crispy chicken sandwich', image: '/api/placeholder/200/150' },
+      { id: 'nuggets_10', name: '10pc McNuggets', price: 5.99, description: 'Crispy chicken nuggets', image: '/api/placeholder/200/150' },
+      { id: 'spicy_chicken', name: 'Spicy Chicken', price: 4.99, description: 'Spicy crispy chicken sandwich', image: '/api/placeholder/200/150' },
+      { id: 'chicken_tenders', name: 'Chicken Tenders', price: 6.49, description: 'Crispy and juicy chicken tenders', image: '/api/placeholder/200/150' },
+      { id: 'grilled_chicken', name: 'Grilled Chicken Sandwich', price: 5.79, description: 'Healthy grilled chicken option.', image: '/api/placeholder/200/150' },
+    ],
+    breakfast: [
+      { id: 'egg_mcmuffin', name: 'Egg McMuffin', price: 3.49, description: 'Classic breakfast sandwich', image: '/api/placeholder/200/150' },
+      { id: 'hash_browns', name: 'Hash Browns', price: 1.99, description: 'Crispy potato hash browns', image: '/api/placeholder/200/150' },
+      { id: 'hotcakes', name: 'Hotcakes', price: 4.79, description: 'Fluffy hotcakes with syrup', image: '/api/placeholder/200/150' },
+      { id: 'sausage_burrito', name: 'Sausage Burrito', price: 3.99, description: 'Sausage, eggs, and cheese in a tortilla.', image: '/api/placeholder/200/150' },
+      { id: 'yogurt_parfait', name: 'Yogurt Parfait', price: 4.29, description: 'Yogurt with granola and berries.', image: '/api/placeholder/200/150' },
+    ],
+    beverages: [
+      { id: 'coke', name: 'Coca-Cola', price: 1.99, description: 'Classic soft drink', image: '/api/placeholder/200/150' },
+      { id: 'sprite', name: 'Sprite', price: 1.99, description: 'Lemon-lime soda', image: '/api/placeholder/200/150' },
+      { id: 'iced_tea', name: 'Iced Tea', price: 2.29, description: 'Refreshing iced tea', image: '/api/placeholder/200/150' },
+      { id: 'coffee', name: 'Coffee', price: 2.49, description: 'Hot or iced coffee', image: '/api/placeholder/200/150' },
+      { id: 'orange_juice', name: 'Orange Juice', price: 2.79, description: 'Freshly squeezed orange juice', image: '/api/placeholder/200/150' },
+    ],
+    desserts: [
+      { id: 'mcflurry', name: 'McFlurry', price: 3.99, description: 'Ice cream with mix-ins', image: '/api/placeholder/200/150' },
+      { id: 'apple_pie', name: 'Apple Pie', price: 2.49, description: 'Warm apple pie', image: '/api/placeholder/200/150' },
+      { id: 'sundae', name: 'Hot Fudge Sundae', price: 3.29, description: 'Ice cream with hot fudge', image: '/api/placeholder/200/150' },
+      { id: 'milkshake', name: 'Milkshake', price: 4.49, description: 'Various milkshake flavors.', image: '/api/placeholder/200/150' },
+      { id: 'cookies', name: 'Chocolate Chip Cookies', price: 2.99, description: 'Freshly baked chocolate chip cookies.', image: '/api/placeholder/200/150' },
+    ],
+    sides: [
+      { id: 'fries', name: 'French Fries', price: 2.79, description: 'Classic crispy fries', image: '/api/placeholder/200/150' },
+      { id: 'onion_rings', name: 'Onion Rings', price: 3.49, description: 'Crispy onion rings', image: '/api/placeholder/200/150' },
+      { id: 'side_salad', name: 'Side Salad', price: 3.99, description: 'Fresh side salad', image: '/api/placeholder/200/150' },
+      { id: 'mozzarella_sticks', name: 'Mozzarella Sticks', price: 4.29, description: 'Fried mozzarella sticks with marinara.', image: '/api/placeholder/200/150' },
+      { id: 'sweet_potato_fries', name: 'Sweet Potato Fries', price: 3.79, description: 'Sweet and savory fries.', image: '/api/placeholder/200/150' },
+    ]
+  };
+
+  const handleCategorySelect = (category) => {
+    setSelectedCategory(category);
+    setPage(1);
+  };
+
+  const handleItemSelect = (item) => {
+    setSelectedItem(item);
+    setPage(2);
+  };
+
+  const handleAddToCart = () => {
+    const newItem = {
+      ...selectedItem,
+      quantity,
+      totalPrice: selectedItem.price * quantity
+    };
+    setCart([...cart, newItem]);
+    setPage(1);
+    setQuantity(1);
+  };
+
+  const handleBack = () => {
+    if (page === 2) {
+      setPage(1);
+      setSelectedItem(null);
+    } else if (page === 1) {
+      setPage(0);
+      setSelectedCategory(null);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-white">
+      <div className="bg-red-600 text-white p-4 flex items-center justify-between">
+        {page > 0 && (
+          <button onClick={handleBack} className="flex items-center">
+            <ArrowLeft className="w-6 h-6" />
+          </button>
+        )}
+        <h1 className="text-xl font-bold text-center flex-1">PIXEL STORE Menu</h1>
+        <div className="relative">
+          <ShoppingCart className="w-6 h-6" />
+          {cart.length > 0 && (
+            <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              {cart.length}
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div className="max-w-2xl mx-auto p-4">
+        {page === 0 && (
+          <div className="grid grid-cols-2 gap-4">
+            {categories.map((category) => (
+              <div
+                key={category.id}
+                onClick={() => handleCategorySelect(category)}
+                className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+              >
+                <img src={category.image} alt={category.name} className="w-full h-32 object-cover" />
+                <div className="p-3 flex justify-between items-center">
+                  <span className="font-medium">{category.name}</span>
+                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {page === 1 && selectedCategory && (
+          <div className="space-y-4">
+            {menuItems[selectedCategory.id]?.map((item) => (
+              <div
+                key={item.id}
+                onClick={() => handleItemSelect(item)}
+                className="flex bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+              >
+                <img src={item.image} alt={item.name} className="w-32 h-32 object-cover" />
+                <div className="p-4 flex-1">
+                  <h3 className="font-bold text-lg">{item.name}</h3>
+                  <p className="text-gray-600 text-sm">{item.description}</p>
+                  <p className="text-red-600 font-bold mt-2">${item.price.toFixed(2)}</p>
+                </div>
+                <div className="flex items-center pr-4">
+                  <ChevronRight className="w-6 h-6 text-gray-400" />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {page === 2 && selectedItem && (
+          <div className="space-y-6">
+            <img src={selectedItem.image} alt={selectedItem.name} className="w-full h-48 object-cover rounded-lg" />
+            <div className="space-y-4">
+              <h2 className="text-2xl font-bold">{selectedItem.name}</h2>
+              <p className="text-gray-600">{selectedItem.description}</p>
+              <p className="text-red-600 text-xl font-bold">${selectedItem.price.toFixed(2)}</p>
+              
+              <div className="flex items-center justify-center space-x-6 py-4">
+                <button 
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="text-red-600"
+                >
+                  <MinusCircle className="w-8 h-8" />
+                </button>
+                <span className="text-2xl font-bold">{quantity}</span>
+                <button 
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="text-red-600"
+                >
+                  <PlusCircle className="w-8 h-8" />
+                </button>
+              </div>
+
+              <button
+                onClick={handleAddToCart}
+                className="w-full bg-red-600 text-white py-4 rounded-lg font-bold text-lg hover:bg-red-700 transition-colors"
+              >
+                Add to Cart - ${(selectedItem.price * quantity).toFixed(2)}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default PixelStore;
