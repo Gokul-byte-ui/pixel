@@ -1,0 +1,276 @@
+import React, { useState } from 'react';
+import { ChevronRight, MinusCircle, PlusCircle, ShoppingCart, ArrowLeft, CreditCard } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+
+const FoodStore = () => {
+  // Initialize all state variables properly
+  const [page, setPage] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [cart, setCart] = useState([]);
+  const [showCart, setShowCart] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [orderComplete, setOrderComplete] = useState(false);
+
+  const categories = [
+    { id: 'pizza', name: 'Pizza', image: '/api/placeholder/150/100' },
+    { id: 'burgers', name: 'Burgers', image: '/api/placeholder/150/100' },
+    { id: 'sushi', name: 'Sushi', image: '/api/placeholder/150/100' },
+    { id: 'desserts', name: 'Desserts', image: '/api/placeholder/150/100' },
+    { id: 'drinks', name: 'Drinks', image: '/api/placeholder/150/100' },
+    { id: 'sides', name: 'Sides', image: '/api/placeholder/150/100' }
+  ];
+
+  const menuItems = {
+    pizza: [
+      { id: 'margherita', name: 'Margherita Pizza', price: 12.99, description: 'Fresh tomatoes, mozzarella, basil', image: '/api/placeholder/200/150' },
+      { id: 'pepperoni', name: 'Pepperoni Pizza', price: 14.99, description: 'Classic pepperoni with extra cheese', image: '/api/placeholder/200/150' },
+      { id: 'vegetarian', name: 'Vegetarian Pizza', price: 13.99, description: 'Mixed vegetables with mushrooms', image: '/api/placeholder/200/150' },
+    ],
+    burgers: [
+      { id: 'classic', name: 'Classic Burger', price: 8.99, description: 'Beef patty with fresh veggies', image: '/api/placeholder/200/150' },
+      { id: 'cheese', name: 'Cheese Burger', price: 9.99, description: 'Classic with extra cheese', image: '/api/placeholder/200/150' },
+      { id: 'veggie', name: 'Veggie Burger', price: 7.99, description: 'Plant-based patty with avocado', image: '/api/placeholder/200/150' },
+    ],
+    sushi: [
+      { id: 'california', name: 'California Roll', price: 10.99, description: 'Crab, avocado, cucumber', image: '/api/placeholder/200/150' },
+      { id: 'salmon', name: 'Salmon Roll', price: 12.99, description: 'Fresh salmon with cream cheese', image: '/api/placeholder/200/150' },
+      { id: 'tuna', name: 'Spicy Tuna Roll', price: 11.99, description: 'Tuna with spicy mayo', image: '/api/placeholder/200/150' },
+    ],
+    desserts: [
+      { id: 'icecream', name: 'Ice Cream Sundae', price: 5.99, description: 'Vanilla ice cream with toppings', image: '/api/placeholder/200/150' },
+      { id: 'cake', name: 'Chocolate Cake', price: 6.99, description: 'Rich chocolate layer cake', image: '/api/placeholder/200/150' },
+    ],
+    drinks: [
+      { id: 'soda', name: 'Soft Drink', price: 2.99, description: 'Choice of sodas', image: '/api/placeholder/200/150' },
+      { id: 'juice', name: 'Fresh Juice', price: 4.99, description: 'Freshly squeezed juice', image: '/api/placeholder/200/150' },
+    ],
+    sides: [
+      { id: 'fries', name: 'French Fries', price: 3.99, description: 'Crispy golden fries', image: '/api/placeholder/200/150' },
+      { id: 'salad', name: 'Side Salad', price: 4.99, description: 'Fresh garden salad', image: '/api/placeholder/200/150' },
+    ]
+  };
+
+  const handleCategorySelect = (category) => {
+    setSelectedCategory(category);
+    setPage(1);
+  };
+
+  const handleItemSelect = (item) => {
+    setSelectedItem(item);
+    setPage(2);
+  };
+
+  const handleAddToCart = () => {
+    const newItem = {
+      ...selectedItem,
+      quantity,
+      totalPrice: selectedItem.price * quantity
+    };
+    setCart([...cart, newItem]);
+    setPage(1);
+    setQuantity(1);
+  };
+
+  const handleBack = () => {
+    if (page === 2) {
+      setPage(1);
+      setSelectedItem(null);
+    } else if (page === 1) {
+      setPage(0);
+      setSelectedCategory(null);
+    }
+  };
+
+  const getTotalPrice = () => {
+    return cart.reduce((total, item) => total + item.totalPrice, 0);
+  };
+
+  const handleCheckout = async () => {
+    setIsProcessing(true);
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    setIsProcessing(false);
+    setOrderComplete(true);
+    setTimeout(() => {
+      setCart([]);
+      setShowCart(false);
+      setOrderComplete(false);
+    }, 2000);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="bg-orange-500 text-white p-4 flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          {page > 0 && (
+            <button onClick={handleBack} className="text-white transform transition-transform duration-200 hover:scale-110">
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+          )}
+          <img src="/api/placeholder/32/32" alt="Logo" className="w-8 h-8" />
+          <h1 className="text-xl font-bold">Food Store</h1>
+        </div>
+        <button 
+          onClick={() => setShowCart(true)} 
+          className="relative transform transition-transform duration-200 hover:scale-110"
+        >
+          <ShoppingCart className="w-6 h-6" />
+          {cart.length > 0 && (
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              {cart.length}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {showCart && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Your Cart</h2>
+              <button onClick={() => setShowCart(false)} className="text-gray-400 hover:text-gray-600 hover:scale-110 transition-all">
+                ✕
+              </button>
+            </div>
+            
+            {cart.length === 0 ? (
+              <p className="text-gray-400">Your cart is empty</p>
+            ) : (
+              <>
+                <div className="space-y-4 max-h-96">
+                  {cart.map((item, index) => (
+                    <div key={index} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg hover:bg-gray-100 transition-colors">
+                      <div>
+                        <h3 className="font-medium">{item.name}</h3>
+                        <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
+                      </div>
+                      <p className="font-bold">${item.totalPrice.toFixed(2)}</p>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="mt-6 border-t border-gray-200 pt-4">
+                  <div className="flex justify-between mb-4">
+                    <span className="font-bold">Total:</span>
+                    <span className="font-bold">${getTotalPrice().toFixed(2)}</span>
+                  </div>
+                  
+                  <button
+                    onClick={handleCheckout}
+                    disabled={isProcessing}
+                    className="w-full py-3 rounded-lg font-bold flex items-center justify-center space-x-2 
+                      bg-orange-500 hover:bg-orange-600 text-white transition-all hover:scale-105"
+                  >
+                    {isProcessing ? (
+                      <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
+                    ) : (
+                      <>
+                        <CreditCard className="w-5 h-5" />
+                        <span>Checkout</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {orderComplete && (
+        <Alert className="fixed top-4 right-4 bg-green-500 text-white">
+          <AlertDescription>
+            Order completed successfully! Thank you for your purchase.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      <div className="max-w-2xl mx-auto p-4">
+        {page === 0 && (
+          <div className="grid grid-cols-2 gap-4">
+            {categories.map((category) => (
+              <div
+                key={category.id}
+                onClick={() => handleCategorySelect(category)}
+                className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer 
+                  transform transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-xl"
+              >
+                <img src={category.image} alt={category.name} className="w-full h-32 object-cover" />
+                <div className="p-3 flex justify-between items-center">
+                  <span className="font-medium">{category.name}</span>
+                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {page === 1 && selectedCategory && (
+          <div className="space-y-4">
+            {menuItems[selectedCategory.id]?.map((item) => (
+              <div
+                key={item.id}
+                onClick={() => handleItemSelect(item)}
+                className="flex bg-white rounded-lg shadow-md overflow-hidden cursor-pointer 
+                  transform transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-xl 
+                  hover:bg-orange-50"
+              >
+                <img src={item.image} alt={item.name} className="w-32 h-32 object-cover" />
+                <div className="p-4 flex-1">
+                  <h3 className="font-bold text-lg">{item.name}</h3>
+                  <p className="text-gray-600 text-sm">{item.description}</p>
+                  <p className="text-orange-500 font-bold mt-2">${item.price.toFixed(2)}</p>
+                </div>
+                <div className="flex items-center pr-4">
+                  <ChevronRight className="w-6 h-6 text-gray-400" />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {page === 2 && selectedItem && (
+          <div className="space-y-6 bg-white p-6 rounded-lg shadow-lg">
+            <img 
+              src={selectedItem.image} 
+              alt={selectedItem.name} 
+              className="w-full h-48 object-cover rounded-lg transform transition-all duration-300 hover:scale-105"
+            />
+            <div className="space-y-4">
+              <h2 className="text-2xl font-bold">{selectedItem.name}</h2>
+              <p className="text-gray-600">{selectedItem.description}</p>
+              <p className="text-orange-500 text-xl font-bold">${selectedItem.price.toFixed(2)}</p>
+              
+              <div className="flex items-center justify-center space-x-6 py-4">
+                <button 
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="text-orange-500 transform transition-all duration-200 hover:scale-125 hover:text-orange-600"
+                >
+                  <MinusCircle className="w-8 h-8" />
+                </button>
+                <span className="text-2xl font-bold">{quantity}</span>
+                <button 
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="text-orange-500 transform transition-all duration-200 hover:scale-125 hover:text-orange-600"
+                >
+                  <PlusCircle className="w-8 h-8" />
+                </button>
+              </div>
+
+              <button
+                onClick={handleAddToCart}
+                className="w-full bg-orange-500 text-white py-4 rounded-lg font-bold text-lg 
+                  transform transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:bg-orange-600"
+              >
+                Add to Cart - ${(selectedItem.price * quantity).toFixed(2)}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default FoodStore;
